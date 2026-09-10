@@ -12,6 +12,19 @@ machine before installing:
 sudo nixos-generate-config --show-hardware-config > hosts/laptop/hardware-configuration.nix
 ```
 
+Each host has a self-contained interactive installer. Copy the relevant
+`install.sh` together with the repository to a USB, then run it from the
+repository root:
+
+```sh
+bash hosts/laptop/install.sh
+bash hosts/desktop/install.sh
+bash hosts/server/install.sh
+```
+
+Run the matching script after partitioning and mounting the target system at
+`/mnt`. The scripts do not format disks or require another local script.
+
 Change `laptop` to `desktop` or `server` as appropriate, review all disk UUIDs,
 boot settings and filesystems, then build with:
 
