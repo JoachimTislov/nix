@@ -22,8 +22,11 @@ bash hosts/desktop/install.sh
 bash hosts/server/install.sh
 ```
 
-Run the matching script after partitioning and mounting the target system at
-`/mnt`. The scripts do not format disks or require another local script.
+The matching script interactively selects and formats the target disk, then
+uses the declarative Disko layout in `hosts/*/disko.nix`: a 512 MiB EFI
+partition, swap, encrypted LUKS root, and Btrfs subvolumes with
+`compress=zstd,noatime`. The small shell wrapper only selects the disk and
+invokes the flake. Disko erases the selected disk; confirm it carefully.
 
 Change `laptop` to `desktop` or `server` as appropriate, review all disk UUIDs,
 boot settings and filesystems, then build with:
