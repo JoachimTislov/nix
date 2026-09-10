@@ -28,6 +28,13 @@ partition, swap, encrypted LUKS root, and Btrfs subvolumes with
 `compress=zstd,noatime`. The small shell wrapper only selects the disk and
 invokes the flake. Disko erases the selected disk; confirm it carefully.
 
+The shared configuration installs Btrfs tooling and configures Snapper for the
+root subvolume, while host modules remain responsible for host-specific
+software. Swap is currently a declarative 16 GiB partition; exact RAM-sized
+swap requires setting the value per host because installer hardware memory is
+not available during pure flake evaluation. In addition, every host gets a
+declarative ZRAM swap device sized to 100% of detected RAM at runtime.
+
 Change `laptop` to `desktop` or `server` as appropriate, review all disk UUIDs,
 boot settings and filesystems, then build with:
 

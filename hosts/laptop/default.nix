@@ -10,7 +10,6 @@
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
   services.libinput.enable = true;
-  zramSwap.enable = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   programs.hyprland.enable = true;
