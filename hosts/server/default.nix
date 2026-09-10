@@ -1,8 +1,10 @@
 { pkgs, lib, ... }:
 {
-  imports = lib.optional (builtins.pathExists ./hardware-configuration.nix)
-    ./hardware-configuration.nix;
+  imports = [ ./disko.nix ]
+    ++ lib.optional (builtins.pathExists ./hardware-configuration.nix)
+      ./hardware-configuration.nix;
   networking.hostName = "homelab";
+  environment.shellAliases.rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#server";
   virtualisation.docker.enable = true;
   services.tailscale.enable = true;
   services.openssh.enable = true;

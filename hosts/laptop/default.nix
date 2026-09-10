@@ -1,8 +1,10 @@
 { pkgs, lib, ... }:
 {
-  imports = lib.optional (builtins.pathExists ./hardware-configuration.nix)
-    ./hardware-configuration.nix;
+  imports = [ ./disko.nix ]
+    ++ lib.optional (builtins.pathExists ./hardware-configuration.nix)
+      ./hardware-configuration.nix;
   networking.hostName = "zenbook";
+  environment.shellAliases.rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#laptop";
   hardware.cpu.amd.updateMicrocode = true;
   hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = true;
