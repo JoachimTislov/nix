@@ -1,5 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
+  imports = lib.optional (builtins.pathExists ./hardware-configuration.nix)
+    ./hardware-configuration.nix;
   networking.hostName = "zenbook";
   hardware.cpu.amd.updateMicrocode = true;
   hardware.graphics.enable = true;
@@ -11,6 +13,8 @@
   zramSwap.enable = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # ASUS UM4251 hardware-configuration.nix belongs here after generation on the laptop.
-  environment.systemPackages = with pkgs; [ hyprland kitty neovim waybar dolphin emacs-pgtk ];
+  programs.hyprland.enable = true;
+  environment.systemPackages = with pkgs; [
+    hyprland kitty neovim waybar dolphin emacs-pgtk pavucontrol blueman
+  ];
 }
