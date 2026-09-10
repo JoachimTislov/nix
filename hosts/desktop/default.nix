@@ -12,6 +12,6 @@
   hardware.nvidia.open = true;
   programs.hyprland.enable = true;
   environment.systemPackages = with pkgs; [
-    hyprland kitty neovim waybar dolphin emacs-pgtk pavucontrol blueman
+    hyprland kitty neovim waybar kdePackages.dolphin emacs pavucontrol blueman
   ];
 }
