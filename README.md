@@ -22,6 +22,10 @@ bash hosts/desktop/install.sh
 bash hosts/server/install.sh
 ```
 
+The laptop installer uses the minimal `laptop-bootstrap` configuration so it
+fits in the NixOS live ISO's RAM-backed overlay. After its first boot, run
+`rebuild` to switch to the complete `laptop` desktop configuration.
+
 The matching script interactively selects and formats the target disk, then
 uses the declarative Disko layout in `hosts/*/disko.nix`: a 512 MiB EFI
 partition, swap, encrypted LUKS root, and Btrfs subvolumes with

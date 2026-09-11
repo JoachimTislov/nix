@@ -18,4 +18,4 @@ if ! ping -c 1 -W 3 nixos.org >/dev/null 2>&1; then
   if [[ -n "$wifi" ]]; then read -r -s -p 'Wi-Fi password: ' password; printf '\n'; nmcli device wifi connect "$wifi" password "$password"; fi
 fi
 sudo nixos-generate-config --no-filesystems --show-hardware-config > "$root/hosts/laptop/hardware-configuration.nix"
-sudo nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko/latest#disko-install -- --write-efi-boot-entries --flake "$root#laptop" --disk main "$disk"
+sudo nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko/latest#disko-install -- --write-efi-boot-entries --flake "$root#laptop-bootstrap" --disk main "$disk"
