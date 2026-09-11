@@ -6,6 +6,8 @@
   nixpkgs.config.allowUnfree = true;
   time.timeZone = "Europe/Oslo";
   i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "no";
+  services.xserver.xkb.layout = "no";
   zramSwap = {
     enable = true;
     memoryPercent = 100;
