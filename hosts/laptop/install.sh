@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-root="$(pwd)"
+export LC_ALL=C
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+[[ -f "$root/flake.nix" ]] || { echo "Could not find flake.nix at $root" >&2; exit 1; }
 command -v nmcli >/dev/null || { echo 'nmcli is not available'; exit 1; }
 command -v nixos-install >/dev/null || { echo 'nixos-install is not available'; exit 1; }
 command -v sfdisk >/dev/null || { echo 'sfdisk is not available'; exit 1; }
