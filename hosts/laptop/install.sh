@@ -18,10 +18,13 @@ read -r -p "ALL DATA ON $disk WILL BE ERASED. Type ERASE to continue: " confirm
 [[ "$confirm" == ERASE ]] || { echo 'Cancelled'; exit 1; }
 sudo umount -R /mnt 2>/dev/null || true
 ram_mib=$(( $(awk '/MemTotal:/ {print $2}' /proc/meminfo) / 1024 + 1023 ))
+sudo wipefs --all "$disk"
 printf 'label: gpt\n,512M,U\n,%sM,S\n,,L\n' "$ram_mib" | sudo sfdisk --wipe always "$disk"
 part_prefix="$disk"; [[ "$disk" =~ [0-9]$ ]] && part_prefix="${disk}p"
+sudo udevadm settle
 sudo mkfs.fat -F32 "${part_prefix}1"
 sudo mkswap "${part_prefix}2"
+sudo swapon "${part_prefix}2"
 sudo cryptsetup luksFormat "${part_prefix}3"
 sudo cryptsetup open "${part_prefix}3" cryptroot
 sudo mkfs.btrfs -f /dev/mapper/cryptroot
@@ -34,13 +37,14 @@ for mount_spec in "@:/mnt" "@home:/mnt/home" "@log:/mnt/var/log" "@cache:/mnt/va
   sudo mount -o "subvol=$subvolume,compress=zstd,noatime" /dev/mapper/cryptroot "$mountpoint"
 done
 sudo mkdir -p /mnt/boot
-sudo mount "${part_prefix}1" /mnt/boot
+sudo mount -o umask=0077 "${part_prefix}1" /mnt/boot
 nmcli radio wifi on || true
 if ! ping -c 1 -W 3 nixos.org >/dev/null 2>&1; then
   nmcli device status
   read -r -p 'Wi-Fi network name (empty for Ethernet): ' wifi
   if [[ -n "$wifi" ]]; then read -r -s -p 'Wi-Fi password: ' password; printf '\n'; nmcli device wifi connect "$wifi" password "$password"; fi
 fi
-sudo nixos-generate-config --root /mnt --no-filesystems --show-hardware-config > "$root/hosts/laptop/hardware-configuration.nix"
-git add -N -f "$root/hosts/laptop/hardware-configuration.nix"
-sudo nixos-install --root /mnt --flake "$root#laptop-bootstrap"
+sudo nixos-generate-config --root /mnt --show-hardware-config > "$root/hosts/laptop/hardware-configuration.nix"
+sudo mkdir -p /mnt/etc/nixos
+sudo cp -a "$root/flake.nix" "$root/flake.lock" "$root/configuration.nix" "$root/hosts" /mnt/etc/nixos/
+sudo nixos-install --root /mnt --flake "path:/mnt/etc/nixos#laptop-bootstrap"

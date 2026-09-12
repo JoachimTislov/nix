@@ -26,18 +26,20 @@ The laptop installer uses the minimal `laptop-bootstrap` configuration so it
 fits in the NixOS live ISO's RAM-backed overlay. After its first boot, run
 `rebuild` to switch to the complete `laptop` desktop configuration.
 
-The matching script interactively selects and formats the target disk, then
-uses the declarative Disko layout in `hosts/*/disko.nix`: a 512 MiB EFI
-partition, swap, encrypted LUKS root, and Btrfs subvolumes with
-`compress=zstd,noatime`. The small shell wrapper only selects the disk and
-invokes the flake. Disko erases the selected disk; confirm it carefully.
+The laptop installer interactively selects and formats the target disk using
+the tools already present in the live ISO. This avoids downloading Disko's
+large installer closure into the ISO's RAM-backed overlay. It creates a
+512 MiB EFI partition, RAM-sized swap, encrypted LUKS root, and Btrfs
+subvolumes with `compress=zstd,noatime`, then generates the hardware and
+filesystem configuration from the mounted result. The installed flake and
+generated hardware configuration are copied to `/etc/nixos` before NixOS is
+installed. Disko remains the declarative fallback for hosts before their
+hardware configuration exists.
 
 The shared configuration installs Btrfs tooling and configures Snapper for the
 root subvolume, while host modules remain responsible for host-specific
-software. Swap is currently a declarative 16 GiB partition; exact RAM-sized
-swap requires setting the value per host because installer hardware memory is
-not available during pure flake evaluation. In addition, every host gets a
-declarative ZRAM swap device sized to 100% of detected RAM at runtime.
+software. Every host gets a declarative ZRAM swap device sized to 100% of
+detected RAM at runtime.
 
 Change `laptop` to `desktop` or `server` as appropriate, review all disk UUIDs,
 boot settings and filesystems, then build with:
